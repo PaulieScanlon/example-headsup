@@ -1,6 +1,6 @@
 # Heads Up Game
 
-A Mastra-powered Heads Up guessing game where users ask yes/no questions to figure out who the famous person is. Built with TypeScript, PostgreSQL, and AI agents for intelligent question answering and guess verification.
+A Mastra-powered Heads Up guessing game where users ask yes/no questions to figure out who the famous person is. This **multi-turn** workflow demonstrates suspend/resume capabilities, allowing for interactive gameplay where the AI remembers context across turns. Built with TypeScript, PostgreSQL, and AI agents for intelligent question answering and guess verification.
 
 ## Features
 
@@ -9,6 +9,24 @@ A Mastra-powered Heads Up guessing game where users ask yes/no questions to figu
 - 📊 Game statistics stored in PostgreSQL database
 - 🔄 Suspend/resume workflow for interactive gameplay
 - 🎮 Real-time game state tracking
+
+## Multi-Turn Workflow
+
+This game demonstrates a **multi-turn workflow** using Mastra's suspend/resume capabilities. Unlike traditional single-turn AI interactions, this workflow:
+
+- **Remembers context** across multiple user interactions
+- **Suspends execution** while waiting for user input
+- **Resumes seamlessly** when the user responds
+- **Tracks game state** (guess count, famous person, etc.) throughout the session
+
+The workflow uses a `dountil` loop that continues asking questions until the correct person is guessed. Each iteration:
+
+1. Suspends the workflow and waits for user input
+2. Processes the user's question or guess
+3. Updates the game state (incrementing guess count)
+4. Either continues the loop or ends the game if the correct person is guessed
+
+This pattern enables truly interactive AI experiences that maintain state and context across multiple turns.
 
 ## Prerequisites
 
