@@ -31,6 +31,9 @@ const questionStep = createStep({
   resumeSchema: z.object({
     userMessage: z.string()
   }),
+  suspendSchema: z.object({
+    message: z.string()
+  }),
   outputSchema: z.object({
     famousPerson: z.string(),
     gameWon: z.boolean()
@@ -45,8 +48,6 @@ const questionStep = createStep({
     if (!userMessage) {
       // First time - ask for a question
       const message = "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!";
-      console.log("message: ", message);
-      console.log("famousPerson: ", famousPerson);
       await suspend({
         message
       });
@@ -78,7 +79,7 @@ const questionStep = createStep({
 
     // Show the agent's response and continue
     await suspend({
-      message: `${response.text}`
+      message: response.text
     });
 
     return { famousPerson, gameWon };
