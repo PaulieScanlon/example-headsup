@@ -44,7 +44,8 @@ const questionStep = createStep({
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
-    gameWon: z.boolean()
+    gameWon: z.boolean(),
+    agentResponse: z.string()
   }),
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
     const { famousPerson } = inputData;
@@ -56,7 +57,7 @@ const questionStep = createStep({
       await suspend({
         message
       });
-      return { famousPerson, gameWon: false };
+      return { famousPerson, gameWon: false, agentResponse: message };
     }
 
     // Increment the global guess count
@@ -82,15 +83,17 @@ const questionStep = createStep({
       Please respond appropriately.
     `);
 
+    const agentResponse = response.text;
+
+    console.log("");
     console.log("userMessage: ", userMessage);
-    console.log("famousPerson: ", famousPerson);
     console.log("gameWon: ", gameWon);
     console.log("guessCount: ", guessCount);
-    console.log("response.text: ", response.text);
+    console.log("agentResponse: ", agentResponse);
 
     if (gameWon) {
       // It was a correct guess - don't suspend, just return so dountil can see the value
-      return { famousPerson, gameWon };
+      return { famousPerson, gameWon, agentResponse };
     }
 
     // Show the agent's response and continue
@@ -98,7 +101,7 @@ const questionStep = createStep({
       message: response.text
     });
 
-    return { famousPerson, gameWon };
+    return { famousPerson, gameWon, agentResponse };
   }
 });
 
@@ -107,7 +110,8 @@ const winGameStep = createStep({
   description: "Handle game win logic",
   inputSchema: z.object({
     famousPerson: z.string(),
-    gameWon: z.boolean()
+    gameWon: z.boolean(),
+    agentResponse: z.string()
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
@@ -115,11 +119,12 @@ const winGameStep = createStep({
     guessCount: z.number()
   }),
   execute: async ({ inputData }) => {
-    const { famousPerson, gameWon } = inputData;
+    const { famousPerson, gameWon, agentResponse } = inputData;
 
     console.log("famousPerson", famousPerson);
     console.log("gameWon", gameWon);
     console.log("guessCount", guessCount);
+    console.log("agentResponse", agentResponse);
 
     await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
 
