@@ -1,6 +1,5 @@
 import { createWorkflow, createStep } from "@mastra/core/workflows";
 import { z } from "zod";
-import stringSimilarity from "string-similarity";
 import { Pool } from "pg";
 
 // PostgreSQL client
@@ -63,9 +62,16 @@ const questionStep = createStep({
     // Increment the global guess count
     guessCount++;
 
-    // Check if the user's message matches the famous person's name using string similarity
-    const similarity = stringSimilarity.compareTwoStrings(userMessage.toLowerCase(), famousPerson.toLowerCase());
-    const gameWon = similarity > 0.6; // Threshold for considering it a match
+    // Check if the user's message is a guess by using the guess verifier agent
+    const guessVerifier = mastra.getAgent("guessVerifierAgent");
+    const verificationResponse = await guessVerifier.generate(`
+      Actual famous person: ${famousPerson}
+      User's guess: "${userMessage}"
+      Is this correct?
+    `);
+
+    const verificationResult = JSON.parse(verificationResponse.text.trim());
+    const gameWon = verificationResult.isCorrect;
 
     // Let the agent handle the user's message (question or guess)
     const agent = mastra.getAgent("gameAgent");
@@ -113,9 +119,9 @@ const winGameStep = createStep({
 
     console.log("famousPerson", famousPerson);
     console.log("gameWon", gameWon);
-    console.log("finalGuessCount", guessCount);
+    console.log("guessCount", guessCount);
 
-    await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
+    // await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
 
     return { famousPerson, gameWon, guessCount: guessCount };
   }

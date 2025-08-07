@@ -23,12 +23,10 @@
     "@mastra/loggers": "^0.10.6",
     "@mastra/memory": "^0.12.1",
     "pg": "^8.16.3",
-    "string-similarity": "^4.0.4",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^24.2.0",
-    "@types/string-similarity": "^4.0.2",
     "mastra": "^0.10.20",
     "typescript": "^5.9.2"
   }
