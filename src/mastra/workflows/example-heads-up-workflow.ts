@@ -76,10 +76,10 @@ const questionStep = createStep({
 
     // Let the agent handle the user's message (question or guess)
     const agent = mastra.getAgent("gameAgent");
-
     const response = await agent.generate(`
       The famous person is: ${famousPerson}
       The user asked: "${userMessage}"
+      Is this a correct guess: ${gameWon}
       Please respond appropriately.
     `);
 
@@ -98,7 +98,7 @@ const questionStep = createStep({
 
     // Show the agent's response and continue
     await suspend({
-      message: response.text
+      message: agentResponse
     });
 
     return { famousPerson, gameWon, agentResponse };
