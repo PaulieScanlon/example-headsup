@@ -2,6 +2,9 @@ import { createWorkflow, createStep } from "@mastra/core/workflows";
 import { z } from "zod";
 import stringSimilarity from "string-similarity";
 
+// Global variable to track guess count across iterations
+let guessCount = 0;
+
 const startStep = createStep({
   id: "start-step",
   description: "Get the name of a famous person",
@@ -42,9 +45,6 @@ const questionStep = createStep({
     const { famousPerson } = inputData;
     const { userMessage } = resumeData ?? {};
 
-    console.log("questionStep executed with inputData:", inputData);
-    console.log("");
-
     if (!userMessage) {
       // First time - ask for a question
       const message = "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!";
@@ -53,6 +53,9 @@ const questionStep = createStep({
       });
       return { famousPerson, gameWon: false };
     }
+
+    // Increment the global guess count
+    guessCount++;
 
     // Check if the user's message matches the famous person's name using string similarity
     const similarity = stringSimilarity.compareTwoStrings(userMessage.toLowerCase(), famousPerson.toLowerCase());
@@ -70,6 +73,7 @@ const questionStep = createStep({
     console.log("userMessage: ", userMessage);
     console.log("famousPerson: ", famousPerson);
     console.log("gameWon: ", gameWon);
+    console.log("guessCount: ", guessCount);
     console.log("response.text: ", response.text);
 
     if (gameWon) {
@@ -95,15 +99,17 @@ const winGameStep = createStep({
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
-    gameWon: z.boolean()
+    gameWon: z.boolean(),
+    guessCount: z.number()
   }),
   execute: async ({ inputData }) => {
     const { famousPerson, gameWon } = inputData;
 
     console.log("famousPerson", famousPerson);
     console.log("gameWon", gameWon);
+    console.log("finalGuessCount", guessCount);
 
-    return { famousPerson, gameWon };
+    return { famousPerson, gameWon, guessCount: guessCount };
   }
 });
 
@@ -114,7 +120,8 @@ export const headsUpWorkflow = createWorkflow({
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
-    gameWon: z.boolean()
+    gameWon: z.boolean(),
+    guessCount: z.number()
   })
 })
   .then(startStep)
