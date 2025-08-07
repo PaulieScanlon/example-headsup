@@ -2,6 +2,10 @@
 
 A Mastra-powered Heads Up guessing game where users ask yes/no questions to figure out who the famous person is. This **multi-turn** workflow demonstrates suspend/resume capabilities, allowing for interactive gameplay where the AI remembers context across turns. Built with TypeScript, PostgreSQL, and AI agents for intelligent question answering and guess verification.
 
+![Heads Up Game](./images/heads-up-game.jpg)
+
+_The classic Heads Up game where players have a name stuck to their forehead and ask yes/no questions to figure out who they are. This digital version uses AI to answer questions and verify guesses._
+
 ## Features
 
 - 🤖 AI-powered question answering with context awareness
