@@ -121,7 +121,7 @@ const winGameStep = createStep({
     console.log("gameWon", gameWon);
     console.log("guessCount", guessCount);
 
-    // await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
+    await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
 
     return { famousPerson, gameWon, guessCount: guessCount };
   }
