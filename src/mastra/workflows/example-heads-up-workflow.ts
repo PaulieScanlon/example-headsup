@@ -1,6 +1,12 @@
 import { createWorkflow, createStep } from "@mastra/core/workflows";
 import { z } from "zod";
 import stringSimilarity from "string-similarity";
+import { Pool } from "pg";
+
+// PostgreSQL client
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL!
+});
 
 // Global variable to track guess count across iterations
 let guessCount = 0;
@@ -108,6 +114,8 @@ const winGameStep = createStep({
     console.log("famousPerson", famousPerson);
     console.log("gameWon", gameWon);
     console.log("finalGuessCount", guessCount);
+
+    await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
 
     return { famousPerson, gameWon, guessCount: guessCount };
   }
