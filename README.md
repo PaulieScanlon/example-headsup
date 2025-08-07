@@ -2,9 +2,7 @@
 
 A Mastra-powered Heads Up guessing game where users ask yes/no questions to figure out who the famous person is. This **multi-turn** workflow demonstrates suspend/resume capabilities, allowing for interactive gameplay where the AI remembers context across turns. Built with TypeScript, PostgreSQL, and AI agents for intelligent question answering and guess verification.
 
-![Heads Up Game](./images/heads-up-game.jpg)
-
-_The classic Heads Up game where players have a name stuck to their forehead and ask yes/no questions to figure out who they are. This digital version uses AI to answer questions and verify guesses._
+![Heads Up Game](https://raw.githubusercontent.com/PaulieScanlon/example-headsup/main/images/heads-up.jpg)
 
 ## Features
 
@@ -145,39 +143,3 @@ CREATE TABLE heads_up_games (
     created_at TIMESTAMP DEFAULT NOW()
 );
 ```
-
-## Project Structure
-
-```
-src/
-├── mastra/
-│   ├── agents/
-│   │   ├── example-famous-person-agent.ts
-│   │   ├── example-game-agent.ts
-│   │   └── example-guess-verifier-agent.ts
-│   ├── workflows/
-│   │   └── example-heads-up-workflow.ts
-│   └── index.ts
-├── schema.sql
-└── .env.example
-```
-
-## Technologies Used
-
-- **Mastra**: AI workflow orchestration
-- **PostgreSQL**: Game statistics storage
-- **TypeScript**: Type-safe development
-- **OpenAI**: AI model for agents
-- **pg**: PostgreSQL client
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-[Add your license here]
