@@ -71,10 +71,10 @@ const questionStep = createStep({
     const agent = mastra.getAgent("gameAgent");
 
     const response = await agent.generate(`
-      The famous person is: ${famousPerson}.
-      The user said: "${userMessage}"
-      Is this a correct guess? ${gameWon ? "YES" : "NO"}
-      Please respond appropriately.`);
+      The famous person is: ${famousPerson}
+      The user asked: "${userMessage}"
+      Please respond appropriately.
+    `);
 
     console.log("userMessage: ", userMessage);
     console.log("famousPerson: ", famousPerson);
