@@ -11,6 +11,7 @@ A Mastra-powered Heads Up guessing game where users ask yes/no questions to figu
 - 📊 Game statistics stored in PostgreSQL database
 - 🔄 Suspend/resume workflow for interactive gameplay
 - 🎮 Real-time game state tracking
+- 🧠 Persistent agent memory
 
 ## Multi-Turn Workflow
 
@@ -103,7 +104,7 @@ The Mastra development server will start on `http://localhost:4111`.
 
 ### AI Agents
 
-- **Famous Person Agent**: Generates random famous people for the game
+- **Famous Person Agent**: Generates random famous people for the game with **persistent memory** to avoid repeating the same people across games
 - **Game Agent**: Answers yes/no questions about the famous person
 - **Guess Verifier Agent**: Verifies player guesses with intelligent name matching
 
@@ -115,6 +116,17 @@ Game results are automatically saved to PostgreSQL with:
 - Whether the game was won
 - Number of guesses it took
 - Timestamp
+
+### Agent Memory
+
+The **Famous Person Agent** uses Mastra's memory system with semantic recall to maintain a persistent list of previously suggested famous people. This ensures:
+
+- **No repetition** - The agent never suggests the same person twice
+- **Cross-session memory** - Memory persists even when the playground is refreshed
+- **Diverse selection** - Chooses from actors, musicians, politicians, athletes, and other categories
+- **Intelligent matching** - Uses semantic search to avoid similar names (e.g., "Beyoncé" vs "Beyoncé Knowles")
+
+The memory is stored in a local SQLite database (`mastra.db`) and uses OpenAI's text embeddings for semantic similarity matching.
 
 ## Environment Variables
 

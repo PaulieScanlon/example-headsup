@@ -23,7 +23,11 @@ const startStep = createStep({
     const agent = mastra.getAgent("famousPersonAgent");
     const response = await agent.generate("Generate a famous person's name", {
       temperature: 1.2,
-      topP: 0.9
+      topP: 0.9,
+      memory: {
+        resource: "heads-up-game",
+        thread: "famous-person-generator"
+      }
     });
     const famousPerson = response.text.trim();
     return { famousPerson };
