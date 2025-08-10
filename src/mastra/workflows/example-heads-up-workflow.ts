@@ -71,14 +71,23 @@ const questionStep = createStep({
 
     // Check if the user's message is a guess by using the guess verifier agent
     const guessVerifier = mastra.getAgent("guessVerifierAgent");
-    const verificationResponse = await guessVerifier.generate(`
-      Actual famous person: ${famousPerson}
-      User's guess: "${userMessage}"
-      Is this correct?
-    `);
+    const verificationResponse = await guessVerifier.generate(
+      [
+        {
+          role: "user",
+          content: `Actual famous person: ${famousPerson}
+              User's guess: "${userMessage}"
+              Is this correct?`
+        }
+      ],
+      {
+        output: z.object({
+          isCorrect: z.boolean()
+        })
+      }
+    );
 
-    const verificationResult = JSON.parse(verificationResponse.text.trim());
-    const gameWon = verificationResult.isCorrect;
+    const gameWon = verificationResponse.object.isCorrect;
 
     // Let the agent handle the user's message (question or guess)
     const agent = mastra.getAgent("gameAgent");

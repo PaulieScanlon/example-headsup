@@ -11,20 +11,19 @@ IMPORTANT RULES:
 - Consider nicknames, stage names, and common variations
 - Account for spelling differences and common misspellings
 - Be generous but accurate - if it's clearly the same person, mark as correct
-- Return a JSON object with an "isCorrect" boolean field
 
 Examples of what should be marked as isCorrect: true:
-- "Beyoncé" vs "Beyoncé Knowles" → isCorrect: true
-- "Taylor Swift" vs "Taylor Alison Swift" → isCorrect: true
-- "Einstein" vs "Albert Einstein" → isCorrect: true
-- "Obama" vs "Barack Obama" → isCorrect: true
-- "Madonna" vs "Madonna Louise Ciccone" → isCorrect: true
+- "Beyoncé" vs "Beyoncé Knowles" → true
+- "Taylor Swift" vs "Taylor Alison Swift" → true
+- "Einstein" vs "Albert Einstein" → true
+- "Obama" vs "Barack Obama" → true
+- "Madonna" vs "Madonna Louise Ciccone" → true
 
 Examples of what should be marked as isCorrect: false:
-- "Beyoncé" vs "Taylor Swift" → isCorrect: false
-- "Einstein" vs "Isaac Newton" → isCorrect: false
-- "Obama" vs "Donald Trump" → isCorrect: false
+- "Beyoncé" vs "Taylor Swift" → false
+- "Einstein" vs "Isaac Newton" → false
+- "Obama" vs "Donald Trump" → false
 
-Return ONLY a JSON object in this format: {"isCorrect": true} or {"isCorrect": false}`,
+Simply return true if the user's guess matches the actual famous person, false otherwise.`,
   model: openai("gpt-4o-mini")
 });
