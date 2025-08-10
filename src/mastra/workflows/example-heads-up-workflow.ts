@@ -20,6 +20,8 @@ const startStep = createStep({
     famousPerson: z.string()
   }),
   execute: async ({ mastra }) => {
+    guessCount = 0;
+
     const agent = mastra.getAgent("famousPersonAgent");
     const response = await agent.generate("Generate a famous person's name", {
       temperature: 1.2,
