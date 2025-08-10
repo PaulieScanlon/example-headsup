@@ -12,6 +12,7 @@ A Mastra-powered Heads Up guessing game where users ask yes/no questions to figu
 - 🔄 Suspend/resume workflow for interactive gameplay
 - 🎮 Real-time game state tracking
 - 🧠 Persistent agent memory
+- 🌐 **Multiple interfaces** - Play via Mastra Playground or dedicated React frontend
 
 ## Multi-Turn Workflow
 
@@ -86,10 +87,22 @@ The Mastra development server will start on `http://localhost:4111`.
 
 ### Access the game
 
+### Option 1: Mastra Playground (Recommended for development/testing)
+
 1. Open your browser to `http://localhost:4111`
 2. Navigate to the workflows section
 3. Start the `headsUpWorkflow`
 4. Begin playing!
+
+### Option 2: React Frontend (Recommended for end users)
+
+For a better user experience, you can also use the dedicated React frontend:
+
+- **Repository**: [example-headsup-fe](https://github.com/PaulieScanlon/example-headsup-fe)
+- **Features**: Clean chat interface, auto-scrolling, win detection, play again functionality
+- **Setup**: Clone the frontend repo and configure it to connect to your Mastra server
+
+The frontend provides a polished chat interface that connects directly to your `headsUpWorkflow` running on the Mastra server.
 
 ## How the Game Works
 
