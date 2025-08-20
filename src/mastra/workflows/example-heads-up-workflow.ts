@@ -43,7 +43,7 @@ const questionStep = createStep({
     userMessage: z.string()
   }),
   suspendSchema: z.object({
-    message: z.string()
+    agentResponse: z.string()
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
@@ -57,54 +57,52 @@ const questionStep = createStep({
 
     if (!userMessage) {
       // First time - ask for a question
-      const message = "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!";
       await suspend({
-        message
+        agentResponse: "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!"
       });
-      return { famousPerson, gameWon: false, agentResponse: message, guessCount };
-    }
-
-    // Increment the guess count
-    guessCount++;
-
-    // Check if the user's message is a guess by using the guess verifier agent
-    const guessVerifier = mastra.getAgent("guessVerifierAgent");
-    const verificationResponse = await guessVerifier.generate(
-      [
-        {
-          role: "user",
-          content: `Actual famous person: ${famousPerson}
+    } else {
+      // Check if the user's message is a guess by using the guess verifier agent
+      const guessVerifier = mastra.getAgent("guessVerifierAgent");
+      const verificationResponse = await guessVerifier.generate(
+        [
+          {
+            role: "user",
+            content: `Actual famous person: ${famousPerson}
               User's guess: "${userMessage}"
               Is this correct?`
+          }
+        ],
+        {
+          output: z.object({
+            isCorrect: z.boolean()
+          })
         }
-      ],
-      {
-        output: z.object({
-          isCorrect: z.boolean()
-        })
-      }
-    );
+      );
 
-    const gameWon = verificationResponse.object.isCorrect;
+      const gameWon = verificationResponse.object.isCorrect;
 
-    // Let the agent handle the user's message (question or guess)
-    const agent = mastra.getAgent("gameAgent");
-    const response = await agent.generate(`
+      // Let the agent handle the user's message (question or guess)
+      const agent = mastra.getAgent("gameAgent");
+      const response = await agent.generate(`
       The famous person is: ${famousPerson}
       The user asked: "${userMessage}"
       Is this a correct guess: ${gameWon}
       Please respond appropriately.
     `);
 
-    const agentResponse = response.text;
+      const agentResponse = response.text;
 
-    console.log("");
-    console.log("userMessage: ", userMessage);
-    console.log("gameWon: ", gameWon);
-    console.log("guessCount: ", guessCount);
-    console.log("agentResponse: ", agentResponse);
+      // Increment the guess count
+      guessCount++;
 
-    return { message: agentResponse, famousPerson, gameWon, agentResponse, guessCount };
+      console.log("");
+      console.log("userMessage: ", userMessage);
+      console.log("gameWon: ", gameWon);
+      console.log("guessCount: ", guessCount);
+      console.log("agentResponse: ", agentResponse);
+
+      return { agentResponse, famousPerson, gameWon, guessCount };
+    }
   }
 });
 
