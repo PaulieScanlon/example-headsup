@@ -57,9 +57,11 @@ const questionStep = createStep({
 
     if (!userMessage) {
       // First time - ask for a question
+      const message = "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!";
       await suspend({
-        agentResponse: "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!"
+        agentResponse: message
       });
+      return { famousPerson, gameWon: false, agentResponse: message, guessCount };
     } else {
       // Check if the user's message is a guess by using the guess verifier agent
       const guessVerifier = mastra.getAgent("guessVerifierAgent");
@@ -95,13 +97,7 @@ const questionStep = createStep({
       // Increment the guess count
       guessCount++;
 
-      console.log("");
-      console.log("userMessage: ", userMessage);
-      console.log("gameWon: ", gameWon);
-      console.log("guessCount: ", guessCount);
-      console.log("agentResponse: ", agentResponse);
-
-      return { agentResponse, famousPerson, gameWon, guessCount };
+      return { famousPerson, gameWon, agentResponse, guessCount };
     }
   }
 });
