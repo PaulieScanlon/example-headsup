@@ -104,17 +104,7 @@ const questionStep = createStep({
     console.log("guessCount: ", guessCount);
     console.log("agentResponse: ", agentResponse);
 
-    if (gameWon) {
-      // It was a correct guess - don't suspend, just return so dountil can see the value
-      return { famousPerson, gameWon, agentResponse, guessCount };
-    }
-
-    // Show the agent's response and continue
-    await suspend({
-      message: agentResponse
-    });
-
-    return { famousPerson, gameWon, agentResponse, guessCount };
+    return { message: agentResponse, famousPerson, gameWon, agentResponse, guessCount };
   }
 });
 
