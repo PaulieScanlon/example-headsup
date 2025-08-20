@@ -7,9 +7,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL!
 });
 
-// Global variable to track guess count across iterations
-let guessCount = 0;
-
 const startStep = createStep({
   id: "start-step",
   description: "Get the name of a famous person",
@@ -17,11 +14,10 @@ const startStep = createStep({
     start: z.boolean()
   }),
   outputSchema: z.object({
-    famousPerson: z.string()
+    famousPerson: z.string(),
+    guessCount: z.number()
   }),
   execute: async ({ mastra }) => {
-    guessCount = 0;
-
     const agent = mastra.getAgent("famousPersonAgent");
     const response = await agent.generate("Generate a famous person's name", {
       temperature: 1.2,
@@ -32,7 +28,7 @@ const startStep = createStep({
       }
     });
     const famousPerson = response.text.trim();
-    return { famousPerson };
+    return { famousPerson, guessCount: 0 };
   }
 });
 
@@ -40,7 +36,8 @@ const questionStep = createStep({
   id: "question-step",
   description: "Handle the complete question-answer-continue loop",
   inputSchema: z.object({
-    famousPerson: z.string()
+    famousPerson: z.string(),
+    guessCount: z.number()
   }),
   resumeSchema: z.object({
     userMessage: z.string()
@@ -51,10 +48,11 @@ const questionStep = createStep({
   outputSchema: z.object({
     famousPerson: z.string(),
     gameWon: z.boolean(),
-    agentResponse: z.string()
+    agentResponse: z.string(),
+    guessCount: z.number()
   }),
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
-    const { famousPerson } = inputData;
+    let { famousPerson, guessCount } = inputData;
     const { userMessage } = resumeData ?? {};
 
     if (!userMessage) {
@@ -63,10 +61,10 @@ const questionStep = createStep({
       await suspend({
         message
       });
-      return { famousPerson, gameWon: false, agentResponse: message };
+      return { famousPerson, gameWon: false, agentResponse: message, guessCount };
     }
 
-    // Increment the global guess count
+    // Increment the guess count
     guessCount++;
 
     // Check if the user's message is a guess by using the guess verifier agent
@@ -108,7 +106,7 @@ const questionStep = createStep({
 
     if (gameWon) {
       // It was a correct guess - don't suspend, just return so dountil can see the value
-      return { famousPerson, gameWon, agentResponse };
+      return { famousPerson, gameWon, agentResponse, guessCount };
     }
 
     // Show the agent's response and continue
@@ -116,7 +114,7 @@ const questionStep = createStep({
       message: agentResponse
     });
 
-    return { famousPerson, gameWon, agentResponse };
+    return { famousPerson, gameWon, agentResponse, guessCount };
   }
 });
 
@@ -126,7 +124,8 @@ const winGameStep = createStep({
   inputSchema: z.object({
     famousPerson: z.string(),
     gameWon: z.boolean(),
-    agentResponse: z.string()
+    agentResponse: z.string(),
+    guessCount: z.number()
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
@@ -134,7 +133,7 @@ const winGameStep = createStep({
     guessCount: z.number()
   }),
   execute: async ({ inputData }) => {
-    const { famousPerson, gameWon, agentResponse } = inputData;
+    const { famousPerson, gameWon, agentResponse, guessCount } = inputData;
 
     console.log("famousPerson", famousPerson);
     console.log("gameWon", gameWon);
@@ -143,7 +142,7 @@ const winGameStep = createStep({
 
     await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
 
-    return { famousPerson, gameWon, guessCount: guessCount };
+    return { famousPerson, gameWon, guessCount };
   }
 });
 
