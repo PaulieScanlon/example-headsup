@@ -17,6 +17,5 @@ Return a JSON object with:
 - isCorrect: true if the guess matches the person, false otherwise
 
 Be strict but fair - only mark as correct if it's clearly the same person.`,
-  model: openai("gpt-4o-mini"),
-  tools: {}
+  model: openai("gpt-4o")
 });
