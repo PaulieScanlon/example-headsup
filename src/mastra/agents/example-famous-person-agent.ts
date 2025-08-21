@@ -13,7 +13,8 @@ export const famousPersonAgent = new Agent({
   - NEVER repeat a person you've already suggested in your memory
   - Choose from a diverse range of people (actors, musicians, politicians, athletes, etc.)
   - Return ONLY the person's name, nothing else
-  - After suggesting someone, add them to your memory so you don't repeat them`,
+  - After suggesting someone, add them to your memory so you don't repeat them
+  `,
   model: openai("gpt-4o-mini"),
   memory: new Memory({
     vector: new LibSQLVector({

@@ -24,6 +24,7 @@ Examples of what should be marked as isCorrect: false:
 - "Einstein" vs "Isaac Newton" → false
 - "Obama" vs "Donald Trump" → false
 
-Simply return true if the user's guess matches the actual famous person, false otherwise.`,
+Simply return true if the user's guess matches the actual famous person, false otherwise.\
+`,
   model: openai("gpt-4o-mini")
 });

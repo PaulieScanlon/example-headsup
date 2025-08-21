@@ -42,6 +42,7 @@ Examples:
 - Guess: "Albert Einstein" with Is this a correct guess: true → "🎉 Congratulations! You guessed correctly!"
 - Guess: "Beyoncé" with Is this a correct guess: false → "Sorry, that's not correct. Keep asking questions!"
 
-CRITICAL: Never reveal the famous person's name in any response, even if it seems natural or helpful to do so.`,
+CRITICAL: Never reveal the famous person's name in any response, even if it seems natural or helpful to do so.
+`,
   model: openai("gpt-4o-mini")
 });
