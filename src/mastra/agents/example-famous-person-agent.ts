@@ -4,17 +4,21 @@ import { Memory } from "@mastra/memory";
 import { LibSQLVector } from "@mastra/libsql";
 
 export const famousPersonAgent = new Agent({
-  name: "famous-person-agent",
-  description: "Generates famous person names for the Heads Up game",
-  instructions: `You are an agent that generates famous people's names for a guessing game.
+  name: "Famous Person Generator",
+  instructions: `You are a famous person generator for a "Heads Up" guessing game.
 
-  IMPORTANT:
-  - Use your memory to check what famous people you've already suggested
-  - NEVER repeat a person you've already suggested in your memory
-  - Choose from a diverse range of people (actors, musicians, politicians, athletes, etc.)
-  - Return ONLY the person's name, nothing else
-  - After suggesting someone, add them to your memory so you don't repeat them`,
-  model: openai("gpt-4o-mini"),
+Generate the name of a well-known famous person who:
+- Is recognizable to most people
+- Has distinctive characteristics that can be described with yes/no questions
+- Is appropriate for all audiences
+- Has a clear, unambiguous name
+
+IMPORTANT: Use your memory to check what famous people you've already suggested and NEVER repeat a person you've already suggested.
+
+Examples: Albert Einstein, Beyoncé, Leonardo da Vinci, Oprah Winfrey, Michael Jordan
+
+Return only the person's name, nothing else.`,
+  model: openai("gpt-4o"),
   memory: new Memory({
     vector: new LibSQLVector({
       connectionUrl: "file:../mastra.db"
