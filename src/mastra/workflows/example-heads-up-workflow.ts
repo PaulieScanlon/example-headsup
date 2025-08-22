@@ -9,7 +9,7 @@ const pool = new Pool({
 
 const startStep = createStep({
   id: "start-step",
-  description: "Get the name of a famous person",
+  description: "Generate a famous person's name",
   inputSchema: z.object({
     start: z.boolean()
   }),
@@ -32,9 +32,9 @@ const startStep = createStep({
   }
 });
 
-const questionStep = createStep({
-  id: "question-step",
-  description: "Handle the complete question-answer-continue loop",
+const gameStep = createStep({
+  id: "game-step",
+  description: "Handles the question-answer-continue loop",
   inputSchema: z.object({
     famousPerson: z.string(),
     guessCount: z.number()
@@ -102,8 +102,8 @@ const questionStep = createStep({
   }
 });
 
-const winGameStep = createStep({
-  id: "win-game-step",
+const winStep = createStep({
+  id: "win-step",
   description: "Handle game win logic",
   inputSchema: z.object({
     famousPerson: z.string(),
@@ -117,12 +117,7 @@ const winGameStep = createStep({
     guessCount: z.number()
   }),
   execute: async ({ inputData }) => {
-    const { famousPerson, gameWon, agentResponse, guessCount } = inputData;
-
-    console.log("famousPerson", famousPerson);
-    console.log("gameWon", gameWon);
-    console.log("guessCount", guessCount);
-    console.log("agentResponse", agentResponse);
+    const { famousPerson, gameWon, guessCount } = inputData;
 
     await pool.query("INSERT INTO heads_up_games (famous_person, game_won, guess_count) VALUES ($1, $2, $3)", [famousPerson, gameWon, guessCount]);
 
@@ -142,6 +137,6 @@ export const headsUpWorkflow = createWorkflow({
   })
 })
   .then(startStep)
-  .dountil(questionStep, async ({ inputData: { gameWon } }) => gameWon)
-  .then(winGameStep)
+  .dountil(gameStep, async ({ inputData: { gameWon } }) => gameWon)
+  .then(winStep)
   .commit();
