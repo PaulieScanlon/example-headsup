@@ -43,7 +43,7 @@ const gameStep = createStep({
     userMessage: z.string()
   }),
   suspendSchema: z.object({
-    agentResponse: z.string()
+    suspendResponse: z.string()
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
@@ -57,44 +57,32 @@ const gameStep = createStep({
 
     if (!userMessage) {
       // First time - ask for a question
-      const message = "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!";
+      const initialMessage = "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!";
 
       await suspend({
-        agentResponse: message
+        suspendResponse: initialMessage
       });
 
-      return { famousPerson, gameWon: false, agentResponse: message, guessCount };
+      return { famousPerson, gameWon: false, agentResponse: initialMessage, guessCount };
     } else {
-      // Check if the user's message is a guess by using the guess verifier agent
-      const guessVerifier = mastra.getAgent("guessVerifierAgent");
-      const verificationResponse = await guessVerifier.generate(
-        [
-          {
-            role: "user",
-            content: `Actual famous person: ${famousPerson}
-              User's guess: "${userMessage}"
-              Is this correct?`
-          }
-        ],
+      // Let the agent handle the user's message (question or guess)
+      const agent = mastra.getAgent("gameAgent");
+      const response = await agent.generate(
+        `
+        The famous person is: ${famousPerson}
+        The user said: "${userMessage}"
+        Please respond appropriately. If this is a guess, tell me if it's correct.
+      `,
         {
           output: z.object({
-            isCorrect: z.boolean()
+            response: z.string(),
+            gameWon: z.boolean()
           })
         }
       );
 
-      const gameWon = verificationResponse.object.isCorrect;
-
-      // Let the agent handle the user's message (question or guess)
-      const agent = mastra.getAgent("gameAgent");
-      const response = await agent.generate(`
-      The famous person is: ${famousPerson}
-      The user asked: "${userMessage}"
-      Is this a correct guess: ${gameWon}
-      Please respond appropriately.
-    `);
-
-      const agentResponse = response.text;
+      // Values from structured output object
+      const { response: agentResponse, gameWon } = response.object;
 
       // Increment the guess count
       guessCount++;
