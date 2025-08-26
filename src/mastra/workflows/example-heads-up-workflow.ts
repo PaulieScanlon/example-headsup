@@ -15,8 +15,7 @@ const startStep = createStep({
   }),
   outputSchema: z.object({
     famousPerson: z.string(),
-    guessCount: z.number(),
-    initialResponse: z.string()
+    guessCount: z.number()
   }),
   execute: async ({ mastra }) => {
     const agent = mastra.getAgent("famousPersonAgent");
@@ -29,17 +28,16 @@ const startStep = createStep({
       }
     });
     const famousPerson = response.text.trim();
-    return { famousPerson, guessCount: 0, initialResponse: "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!" };
+    return { famousPerson, guessCount: 0 };
   }
 });
 
-const questionStep = createStep({
-  id: "question-step",
-  description: "Handle the complete question-answer-continue loop",
+const gameStep = createStep({
+  id: "game-step",
+  description: "Handles the question-answer-continue loop",
   inputSchema: z.object({
     famousPerson: z.string(),
-    guessCount: z.number(),
-    initialResponse: z.string()
+    guessCount: z.number()
   }),
   resumeSchema: z.object({
     userMessage: z.string()
@@ -54,12 +52,12 @@ const questionStep = createStep({
     guessCount: z.number()
   }),
   execute: async ({ inputData, mastra, resumeData, suspend }) => {
-    let { famousPerson, guessCount, initialResponse } = inputData;
+    let { famousPerson, guessCount } = inputData;
     const { userMessage } = resumeData ?? {};
 
     if (!userMessage) {
       await suspend({
-        suspendResponse: initialResponse
+        suspendResponse: "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!"
       });
     }
 
@@ -124,6 +122,6 @@ export const headsUpWorkflow = createWorkflow({
   })
 })
   .then(startStep)
-  .dountil(questionStep, async ({ inputData: { gameWon } }) => gameWon)
+  .dountil(gameStep, async ({ inputData: { gameWon } }) => gameWon)
   .then(winStep)
   .commit();
