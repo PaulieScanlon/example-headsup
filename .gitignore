@@ -7,3 +7,4 @@ dist
 *.db
 *.db-*
 .cursor
+.DS_store
