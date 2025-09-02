@@ -55,8 +55,9 @@ const gameStep = createStep({
     let { famousPerson, guessCount } = inputData;
     const { userMessage } = resumeData ?? {};
 
+    // Return suspend with message to inform the user
     if (!userMessage) {
-      await suspend({
+      return await suspend({
         suspendResponse: "I'm thinking of a famous person. Ask me yes/no questions to figure out who it is!"
       });
     }
